@@ -8,21 +8,19 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Core5ApiAuth.Repository
 {
     public class JWTManagerRepository : IJWTManagerRepository
     {
-        Dictionary<string, string> UsersRecords = new Dictionary<string, string>
+     /*   Dictionary<string, string> UsersRecords = new Dictionary<string, string>
         {
             { "user1","password1"},
             { "user2","password2"},
             { "user3","password3"},
-        };
+        };*/
 
         private readonly IConfiguration iconfiguration;
-        private readonly UserContext context;
 
         public JWTManagerRepository(IConfiguration iconfiguration)
         {
