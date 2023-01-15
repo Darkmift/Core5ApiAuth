@@ -3,7 +3,6 @@ using Core5ApiAuth.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -13,12 +12,6 @@ namespace Core5ApiAuth.Repository
 {
     public class JWTManagerRepository : IJWTManagerRepository
     {
-     /*   Dictionary<string, string> UsersRecords = new Dictionary<string, string>
-        {
-            { "user1","password1"},
-            { "user2","password2"},
-            { "user3","password3"},
-        };*/
 
         private readonly IConfiguration iconfiguration;
 
@@ -27,14 +20,18 @@ namespace Core5ApiAuth.Repository
             this.iconfiguration = iconfiguration;
         }
 
-        public Tokens Authenticate(Users users,UserContext context)
+        public Tokens Authenticate(UsersDto userData,UserContext context)
         {
             try
             {
+                if(userData == null || userData.Name.IsNullOrEmpty() || userData.Password.IsNullOrEmpty())
+                {
+                    throw new Exception("invalid user data");
+                }
 
-                var user = context.Users.Where(u => u.Name == users.Name).SingleOrDefault();
+                var user = context.Users.Where(u => u.Name == userData.Name).SingleOrDefault();
 
-                if (user.Name.IsNullOrEmpty())
+                if (user == null)
                 {
 
                     throw new Exception("no user found");
@@ -47,7 +44,7 @@ namespace Core5ApiAuth.Repository
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                   {
-                 new Claim(ClaimTypes.Name, users.Name)
+                 new Claim(ClaimTypes.Name, userData.Name)
                   }),
                     Expires = DateTime.UtcNow.AddMinutes(10),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
@@ -61,28 +58,5 @@ namespace Core5ApiAuth.Repository
                 return null;
             }
         }
-
-/*        public Tokens AuthenticateOld(Users users)
-        {
-            if (!UsersRecords.Any(x => x.Key == users.Name && x.Value == users.Password))
-            {
-                return null;
-            }
-
-            // Else we generate JSON Web Token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.UTF8.GetBytes(iconfiguration["JWT:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-              {
-             new Claim(ClaimTypes.Name, users.Name)
-              }),
-                Expires = DateTime.UtcNow.AddMinutes(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return new Tokens { Token = tokenHandler.WriteToken(token) };
-        }*/
     }
 }

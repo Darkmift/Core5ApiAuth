@@ -37,7 +37,7 @@ namespace Core5ApiAuth.Controllers
 		[AllowAnonymous]
 		[HttpPost]
 		[Route("authenticate")]
-		public IActionResult Authenticate(Users usersdata)
+		public IActionResult Authenticate(UsersDto usersdata)
 		{
 			var token = _jWTManager.Authenticate(usersdata, _dbContext);
 
@@ -46,7 +46,9 @@ namespace Core5ApiAuth.Controllers
 				return Unauthorized();
 			}
 
-			return Ok(token);
+			var tokenDto = new TokenDto{ Token = token.Token};
+
+			return Ok(tokenDto);
 		}
 	}
 }

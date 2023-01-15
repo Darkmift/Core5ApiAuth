@@ -9,6 +9,6 @@ namespace Core5ApiAuth.Repository
 {
     public interface IJWTManagerRepository
     {
-        Tokens Authenticate(Users users,UserContext context);
+        Tokens Authenticate(UsersDto userData,UserContext context);
     }
 }
